@@ -16,13 +16,13 @@ import Plotting as plt
 
 # User customized variables
 #############################################################
-player_ids = {0: "Jacob" .... ETC} # Add player_ids here
-results_folder = "RESULTS/FOLDER/HERE"
+player_ids = {0: "Jacob" ... IDS HERE} # 
+results_folder = "RESULTS/DIR/HERE"
 #############################################################
 
 
 print ("----------------------------------------------------")
-print ("Welcome to the NYT Mini Times Analysis Program.")
+print ("Welcome to the Double Dash 🥊 Data Analysis Program.")
 print ("----------------------------------------------------")
 
 # Class to hold scores, player, and datetime of score.
@@ -78,6 +78,11 @@ class Player:
         self.avg_losstime = []
         self.avg_wintod = []
         self.avg_losstod = []
+        
+        self.avg_wintimes = []
+        self.avg_losstimes = []
+        self.avg_wintods = []
+        self.avg_losstods = []
         
         # Fastest/Avg/Slowest
         self.fastest = 0
@@ -201,7 +206,7 @@ for id in players:
             mins = solve.date.minute / 60
             solve_tod = hr + mins
             tod[i] = solve_tod
-                    
+                
     avg_solve = 0
     solves = 0
     filtered = []
@@ -225,14 +230,14 @@ def win_stat(solve, weekday):
     players[name].placements[0] += 1
     players[name].wkday_placements[weekday][0] += 1
     players[name].wins += 1
-    players[name].avg_wintime.append(solve.time)
+    players[name].avg_wintimes.append(solve.time)
     
     # Time of win
     hr = solve.date.hour
     mins = solve.date.minute / 60
     tod = hr + mins
     
-    players[name].avg_wintod.append(tod)
+    players[name].avg_wintods.append(tod)
 
 # Sort through times for placements
 for i in range(date_range):
@@ -271,22 +276,22 @@ for i in range(date_range):
     if day_times[0].time != day_times[-1]:
         name = day_times[-1].player
         players[name].losses += 1
-        players[name].avg_losstime.append(day_times[-1].time)
+        players[name].avg_losstimes.append(day_times[-1].time)
         
         # Time of loss
         hr = day_times[-1].date.hour
         mins = day_times[-1].date.minute / 60
         tod = hr + mins      
-        players[name].avg_losstod.append(tod)
+        players[name].avg_losstods.append(tod)
             
 # Avg out the avgwin/avgloss
 for id in players:
     if players[id].avg_wintime:
-        players[id].avg_wintime = np.average(players[id].avg_wintime)
-        players[id].avg_wintod = np.average(players[id].avg_wintod)
+        players[id].avg_wintime = np.average(players[id].avg_wintimes)
+        players[id].avg_wintod = np.average(players[id].avg_wintods)
     if players[id].avg_losstime:
-        players[id].avg_losstime = np.average(players[id].avg_losstime)
-        players[id].avg_losstod = np.average(players[id].avg_losstod)
+        players[id].avg_losstime = np.average(players[id].avg_losstimes)
+        players[id].avg_losstod = np.average(players[id].avg_losstods)
 
 ### Export the results to separate .csv files for R plotting
 print ("Exporting Results")
@@ -375,3 +380,25 @@ with open(weekday_results, "w") as f:
             row = [days[i], id]
             row.extend(players[id].wday_times[i])
             writer.writerow(row)
+            
+### Win loss/TODs
+header = ["Player", "Win/Loss", "Speeds/TOD"]
+win_tod_results = results_folder + "/Win-Loss TOD Results.csv"
+with open(win_tod_results, "w") as f:
+    writer = csv.writer(f)
+    writer.writerow(header)
+    for id in players:
+        row = [id, "Win Speeds"]
+        row.extend(players[id].avg_wintimes)
+        writer.writerow(row)
+        row = [id, "Win TOD"]
+        row.extend(players[id].avg_wintods)
+        writer.writerow(row)
+        
+    for id in players:
+        row = [id, "Loss Speeds"]
+        row.extend(players[id].avg_losstimes)
+        writer.writerow(row)
+        row = [id, "Loss TOD"]
+        row.extend(players[id].avg_losstods)
+        writer.writerow(row)
