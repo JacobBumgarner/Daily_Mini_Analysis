@@ -18,11 +18,12 @@ import Plotting as plt
 #############################################################
 player_ids = {0: "Jacob" ... IDS HERE} # 
 results_folder = "RESULTS/DIR/HERE"
+chat_name = "Chat Name Here"
 #############################################################
 
 
 print ("----------------------------------------------------")
-print ("Welcome to the Double Dash 🥊 Data Analysis Program.")
+print ("Welcome to the NYT Mini Time Analysis Program.")
 print ("----------------------------------------------------")
 
 # Class to hold scores, player, and datetime of score.
@@ -118,7 +119,7 @@ try:
     end_time = int(end_time - 978307200) * 1000000000
 
     # Send our query to the database
-    query = f"""SELECT text, handle_id, date FROM message MSG INNER JOIN chat_message_join CMJ ON CMJ.message_id = MSG.ROWID INNER JOIN chat ON chat.ROWID = CMJ.chat_id WHERE (chat.display_name = "Double Dash 🥊" AND date > {start_time} AND date < {end_time}) ORDER BY MSG.date ASC;"""
+    query = f"""SELECT text, handle_id, date FROM message MSG INNER JOIN chat_message_join CMJ ON CMJ.message_id = MSG.ROWID INNER JOIN chat ON chat.ROWID = CMJ.chat_id WHERE (chat.display_name = {chat_name} AND date > {start_time} AND date < {end_time}) ORDER BY MSG.date ASC;"""
     
     cursor.execute(query)
     texts = cursor.fetchall()
